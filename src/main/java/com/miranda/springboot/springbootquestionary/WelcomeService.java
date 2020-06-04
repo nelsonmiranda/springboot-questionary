@@ -1,4 +1,4 @@
-package com.miranda.springboot.server;
+package com.miranda.springboot.springbootquestionary;
 
 import org.springframework.stereotype.Component;
 
