@@ -21,4 +21,9 @@ public class SurveyController {
 		return surveyService.retrieveQuestions(surveyId);
 	}
 	
+	@GetMapping("/surveys/{surveyId}/questions/{questionId}")
+	public Question retrieveDetailsForQuestion(@PathVariable String surveyId, @PathVariable String questionId){
+		return surveyService.retrieveQuestion(surveyId, questionId);
+	}
+	
 }
