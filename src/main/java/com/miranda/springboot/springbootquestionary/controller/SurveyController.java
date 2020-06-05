@@ -26,44 +26,45 @@ public class SurveyController {
 		return surveyService.retrieveQuestions(surveyId);
 	}
 	
+	@GetMapping("/surveys/{surveyId}/questions/{questionId}")
+	public Question retrieveDetailsForQuestion(@PathVariable String surveyId, @PathVariable String questionId){
+		return surveyService.retrieveQuestion(surveyId, questionId);
+	}
+	
+	/**
+	//What should be structure of request body?
+		{
+	        "id": "Question1",
+	        "description": "Largest Country in the World",
+	        "correctAnswer": "Russia",
+	        "options": [
+	            "India",
+	            "Russia",
+	            "United States",
+	            "China"
+	        ]
+	    }
+	//How will it be mapped to Question object? 
+	 * Using @RequestBody
+	//What should be returned?
+	//What should be response status?
+	 * 
+	 */
+	
 	@PostMapping("/surveys/{surveyId}/questions")
 	public ResponseEntity<Void> addQuestionToSurvey(@PathVariable String surveyId,@RequestBody Question newQuestion){
-		/**
-		//What should be structure of request body?
-			{
-		        "id": "Question1",
-		        "description": "Largest Country in the World",
-		        "correctAnswer": "Russia",
-		        "options": [
-		            "India",
-		            "Russia",
-		            "United States",
-		            "China"
-		        ]
-		    }
-		//How will it be mapped to Question object? 
-		 * Using @RequestBody
-		//What should be returned?
-		//What should be response status?
-		 * 
-		 */
+		
 		Question question = surveyService.addQuestion(surveyId, newQuestion);
 		
 		if(question == null)
 			return ResponseEntity.noContent().build();
+	
 		//Success - URI of the new resource in Response Header
-		
 		 URI location = ServletUriComponentsBuilder.fromCurrentRequest().path(
 				"/{questionId}").buildAndExpand(question.getId()).toUri();
 		
 		//Status - Created
-		return ResponseEntity.created(location).build();
-	}
-	
-	             
-	@GetMapping("/surveys/{surveyId}/questions/{questionId}")
-	public Question retrieveDetailsForQuestion(@PathVariable String surveyId, @PathVariable String questionId){
-		return surveyService.retrieveQuestion(surveyId, questionId);
+		return ResponseEntity.created(location).build(); 
 	}
 	
 }
