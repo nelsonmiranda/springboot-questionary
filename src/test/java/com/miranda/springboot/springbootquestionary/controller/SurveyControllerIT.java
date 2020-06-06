@@ -1,9 +1,10 @@
 package com.miranda.springboot.springbootquestionary.controller;
 
-
 import java.util.Arrays;
 
 import org.json.JSONException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -25,31 +26,30 @@ class SurveyControllerIT {
 
 	@LocalServerPort
 	private int port;
-	
+
+	TestRestTemplate restTemplate = new TestRestTemplate();
+
+	HttpHeaders headers = new HttpHeaders();
+
+	// Accept : application/json
+	@BeforeEach
+	public void setupJSONAcceptType() {
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+	}
+
+	private String createUrl(String uri) {
+		return "http://localhost:" + port + uri;
+	}
+
 	@Test
 	void testRetrieveSurveyQuestion() throws Exception {
-		
-		String url = "http://localhost:" + port + "/surveys/Survey1/questions/Question1";
-		
-		TestRestTemplate restTemplate = new TestRestTemplate();
-		
-		//Accept : application/json
-		
-		//String output = restTemplate.getForObject(url, String.class);
-		
-		HttpHeaders headers = new HttpHeaders();
-		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));	
-		
-		//HttpEntity
-		HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-		
-		System.out.println("*********** Response ********************");
-		System.out.println("Response: " + response.getBody());
-		
+
 		String expected = "{\"id\":\"Question1\",\"description\":\"Largest Country in the World\",\"correctAnswer\":\"Russia\",\"options\":[\"India\",\"Russia\",\"United States\",\"China\"]}";
-		
-        JSONAssert.assertEquals(expected, response.getBody(), false);
+
+		ResponseEntity<String> response = restTemplate.exchange(createUrl("/surveys/Survey1/questions/Question1"),
+				HttpMethod.GET, new HttpEntity<String>(null, headers), String.class);
+
+		JSONAssert.assertEquals(expected, response.getBody(), false);
 	}
 
 }
