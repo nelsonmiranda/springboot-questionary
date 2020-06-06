@@ -2,8 +2,8 @@ package com.miranda.springboot.springbootquestionary.controller;
 
 import java.util.Arrays;
 
-import org.json.JSONException;
-import org.junit.jupiter.api.BeforeAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import com.miranda.springboot.springbootquestionary.SpringbootQuestionaryApplication;
+import com.miranda.springboot.springbootquestionary.model.Question;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest(classes = SpringbootQuestionaryApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -52,4 +53,18 @@ class SurveyControllerIT {
 		JSONAssert.assertEquals(expected, response.getBody(), false);
 	}
 
+	@Test
+	public void createSurveyQuestion() {
+		//Http Body
+		Question question = new Question("DOESN'T MATTER", "Small number", "1",
+				Arrays.asList("India", "1", "United States", "China"));
+		
+		ResponseEntity<String> response = restTemplate.exchange(createUrl("/surveys/Survey1/questions"),
+				HttpMethod.POST, new HttpEntity<Question>(question, headers), String.class);
+
+		String actual = response.getHeaders().get(HttpHeaders.LOCATION).get(0);
+		
+		assertTrue(actual.contains("/surveys/Survey1/questions"));
+	}
+	
 }
