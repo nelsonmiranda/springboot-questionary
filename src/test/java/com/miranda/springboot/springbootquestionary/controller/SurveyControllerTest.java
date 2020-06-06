@@ -19,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -27,6 +28,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.miranda.springboot.springbootquestionary.model.Question;
 import com.miranda.springboot.springbootquestionary.service.SurveyService;
 
+@WithMockUser(username = "admin", password = "password")
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(value = SurveyController.class)
 class SurveyControllerTest {
