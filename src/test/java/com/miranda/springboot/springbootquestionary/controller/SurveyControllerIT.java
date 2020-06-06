@@ -1,5 +1,6 @@
 package com.miranda.springboot.springbootquestionary.controller;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.codec.Base64;
 
 import com.miranda.springboot.springbootquestionary.SpringbootQuestionaryApplication;
 import com.miranda.springboot.springbootquestionary.model.Question;
@@ -35,17 +37,15 @@ class SurveyControllerIT {
 	// Accept : application/json
 	@BeforeEach
 	public void setupJSONAcceptType() {
+		headers = createHeadersAuthentication("admin", "password");
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-	}
-
-	private String createUrl(String uri) {
-		return "http://localhost:" + port + uri;
 	}
 
 	@Test
 	void testRetrieveSurveyQuestion() throws Exception {
 
-		String expected = "{\"id\":\"Question1\",\"description\":\"Largest Country in the World\",\"correctAnswer\":\"Russia\",\"options\":[\"India\",\"Russia\",\"United States\",\"China\"]}";
+		String expected = "{\"id\":\"Question1\",\"description\":\"Largest Country in the World\",\"correctAnswer\":"
+				+ "\"Russia\",\"options\":[\"India\",\"Russia\",\"United States\",\"China\"]}";
 
 		ResponseEntity<String> response = restTemplate.exchange(createUrl("/surveys/Survey1/questions/Question1"),
 				HttpMethod.GET, new HttpEntity<String>(null, headers), String.class);
@@ -65,6 +65,22 @@ class SurveyControllerIT {
 		String actual = response.getHeaders().get(HttpHeaders.LOCATION).get(0);
 		
 		assertTrue(actual.contains("/surveys/Survey1/questions"));
+	}
+
+	private HttpHeaders createHeadersAuthentication(String username, String password) {
+		
+		return new HttpHeaders() {
+			{
+				String auth = username + ":" + password;
+				byte[] encodedAuth = Base64.encode(auth.getBytes(Charset.forName("US-ASCII")));
+				String authHeader = "Basic " + new String(encodedAuth);
+				set("Authorization", authHeader);
+			}
+		};
+	}
+
+	private String createUrl(String uri) {
+		return "http://localhost:" + port + uri;
 	}
 	
 }
