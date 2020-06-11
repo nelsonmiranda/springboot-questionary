@@ -32,7 +32,7 @@ class SurveyControllerIT {
 
 	TestRestTemplate restTemplate = new TestRestTemplate();
 
-	HttpHeaders headers = new HttpHeaders();
+	HttpHeaders headers;
 
 	// Accept : application/json
 	@BeforeEach
